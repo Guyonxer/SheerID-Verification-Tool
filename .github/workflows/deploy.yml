@@ -1,0 +1,33 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      working-directory: ./auto-verify-tool
+      run: npm ci
+    
+    - name: Run tests (if any)
+      working-directory: ./auto-verify-tool
+      run: npm test --if-present
+    
+    - name: Notify deployment
+      run: |
+        echo "✅ Build successful!"
+        echo "🚀 Render will automatically deploy from this commit"
+        echo "📊 Check deployment status at: https://dashboard.render.com"
